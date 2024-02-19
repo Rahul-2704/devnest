@@ -3,6 +3,8 @@ const app=express();
 const puppeteer = require('puppeteer');
 const port=process.env.PORT||3000;
 const cors=require('cors')
+require('dotenv').config()
+console.log(process.env.PORT)
 const {getProduct } = require('./controllers/getProduct.js');
 app.use(cors({
     origin:5500,
