@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Product Search</title>
+</head>
+<body>
+    <h1>Amazon Product Search</h1>
+
+    <form id="searchForm">
+        <label for="keyword">Enter Keyword:</label>
+        <input type="text" id="keyword" name="keyword" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            
+            const keyword = document.getElementById('keyword').value;
+            
+            fetch(`http://localhost:3000/search?keyword=${encodeURIComponent(keyword)}`)
+                .then(response => response.json())
+                .then(data => displayResults(data))
+                .catch(error => console.error('Error:', error));
+        });
+
+        async function displayResults(products) {
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+
+            if (products.length === 0) {
+                resultsContainer.innerHTML = '<p>No results found.</p>';
+                return;
+            }
+
+            const productList = document.createElement('ul');
+
+            products.forEach(product => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <h3>Name:</h3> ${product.name}<br>
+                    <h3>Description:</h3> ${product.description}<br>
+                    <h3>Rating:</h3> ${product.rating}<br>
+                    <h3>Reviews:</h3> ${product.reviews}<br>
+                    <h3>TopReviews:</h3>
+                    <ul>${product.topReviews.map(rev => `<li>${rev}</li>`).join('')}</ul>
+                    <h3>Price:</h3> ${product.price}<br><br>
+                `;
+                productList.appendChild(listItem);
+            });
+
+            resultsContainer.appendChild(productList);
+        }
+    </script>
+</body>
+</html>
